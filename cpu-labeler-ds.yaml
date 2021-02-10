@@ -55,8 +55,17 @@ spec:
     spec:
       containers:
         - name: labeler
-          image: 'jpapejr/cpu-labeler:latest'
-          command: ["/usr/local/bin/script.sh"]  
+          image: 'alpine:latest'
+          command: ["/bin/sh", "-c"]
+          args:
+            - >
+              cd /tmp;
+              wget -O ./kubectl "https://dl.k8s.io/release/v1.19.7/bin/linux/amd64/kubectl";
+              chmod 755 ./kubectl;
+              LABEL=`awk '/((^model name.*))/ { print $0 }' /proc/cpuinfo | cut -d':' -f2 | sed 's/^ *//g' | tr "[:blank:]-,()@" - | uniq`;
+              echo "./kubectl label no/$NODE io.cpu.modelname=$LABEL --overwrite";
+              ./kubectl label no/$NODE io.cpu.modelname=$LABEL --overwrite;
+              while true; do   sleep 365d; done;
           resources:
             limits:
               memory: 100Mi
