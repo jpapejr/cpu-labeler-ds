@@ -62,7 +62,7 @@ spec:
               cd /tmp;
               wget -O ./kubectl "https://dl.k8s.io/release/v1.19.7/bin/linux/amd64/kubectl";
               chmod 755 ./kubectl;
-              LABEL=`awk '/((^model name.*))/ { print $0 }' /proc/cpuinfo | cut -d':' -f2 | sed 's/^ *//g' | tr "[:blank:]-,()@" - | uniq`;
+              LABEL=`awk '/((^model name.*))/ { print $0 }' /proc/cpuinfo | cut -d':' -f2 | sed 's/^ *//g' | tr -d "()" | tr "[:blank:]-,@" - | uniq`;
               echo "./kubectl label no/$NODE io.cpu.modelname=$LABEL --overwrite";
               ./kubectl label no/$NODE io.cpu.modelname=$LABEL --overwrite;
               while true; do   sleep 365d; done;
